@@ -226,5 +226,77 @@ vector<vectot<string>> file; //向量元素是vector对象
 
 ##### 4.1.2 迭代器类型
 
-* iterator 
+* `iterator`能读写
 
+  ```cpp
+  vector<int>::iterator it;
+  string::iterator it2;
+  ```
+
+* `const_iterator` 只能读
+
+  > 和常量指针差不多
+
+  ```cpp
+  vector<int>::const_iterator it3;
+  ```
+
+##### 4.1.3 `begin和end` 运算符
+
+* 如果对象是常量返回const_iterator;
+
+* 如果不是返回iterator
+
+  ```cpp
+  vector<int> v;
+  const vector<int> v2;
+  auto it1 = v.begin(); 
+  auto it2 = v2.begin(); const_iterator
+  ```
+
+  > c++11 为const_iterator 引入cbegin 和cend 
+  >
+  > 无论变量是什么都返回const_iterator
+
+* 调用类对象的成员函数
+  * 必须要加(*it).name(); 括号
+  * 加括号和新号才是访问元素本身
+  * 当然用 `->`也可以直接使用
+
+##### 4.1.4 容易让迭代失效的操作
+
+* 不能操作任何改变对象容量的操作 如`push_back`
+
+#### 4.2 迭代器运算
+
+> 在string和vector的迭代器中提供了额外更多的运算符，可跨越多个元素，支持运算关系
+
+* 所支持的关系表
+
+  | 操作        | 含义                                                  |
+  | ----------- | ----------------------------------------------------- |
+  | iter+n      | 迭代器加上一个整数依然是迭代器相当于移动n个位置返回值 |
+  | iter-n      | 同上类似                                              |
+  | iter+=n     | 加上赋值语句                                          |
+  | iter-=n     | 同上                                                  |
+  | iter1-iter2 | 得到距离的differece_type类型                          |
+  | > >= < <=   |                                                       |
+
+* `difference_type` 的带符号的整型数 距离 两个迭代器相减获得的结果类型
+
+  * string 和 vector都定义了
+
+* 用迭代器写的二分
+
+  ```cpp
+  auto beg = t.begin(), end = t.end(); //t的内容有序
+  auto mid = t.begin()+(end-beg)/2;
+  while (mid != end && *mid != ans) { //查找ans元素
+  	if (ans < *mid)
+          end = mid;
+      else beg = mid;
+      mid = beg+(end-begin)/2;
+  }
+  ```
+
+  
