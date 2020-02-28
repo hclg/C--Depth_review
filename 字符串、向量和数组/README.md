@@ -87,6 +87,7 @@
   isprint(c) //当c是可打印字符为真
   ispunct(c) //当c是标点符号为真
   isspace(c) //当c为空白是真
+  stoll(c)   //转数字
   tolower(c) //转小写
       upper
   ```
