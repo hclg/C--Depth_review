@@ -1,6 +1,26 @@
 #include <bits/stdc++.h>
 using namespace std;
 int main() {
+    int as[3][4] = {{0}, {1}, {2}};
+    cout << as[0][0] << as[0][1] << as[1][0] << as[1][1] << endl;
+    int (&row)[4] = as[1];
+//    auto &row = as[1][0];
+    size_t cnt = 0;
+    for (auto &row : as)
+        for (auto &col : row) {
+            col = cnt;
+            ++cnt;
+        }
+
+    cout << row[0] << row[1] << endl;
+    vector<int> ve{1,2,3};
+    vector<int> v2{1,2,3};
+    if (ve == v2)
+        puts("sdsad");
+    int a[] = {0,1,2,3,4};
+    auto p = a+2;
+    cout << p[-2] << endl;
+    cout << end(a)-begin(a) <<endl;
     string k("11");
     auto i = k.size()-2;
     for (; i >= 0 && k[i] == '1';--i);
