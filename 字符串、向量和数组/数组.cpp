@@ -1,15 +1,18 @@
 #include <bits/stdc++.h>
 using namespace std;
+using int_array = int[4];
 int main() {
     int as[3][4] = {{0}, {1}, {2}};
     cout << as[0][0] << as[0][1] << as[1][0] << as[1][1] << endl;
-    int (&row)[4] = as[1];
+//    auto (row)[4]= {as[0],as[1],as[2],as[3]};
+//    auto row = as;
+    cout << row[1][1] << row[1][0] <<endl;
 //    auto &row = as[1][0];
     size_t cnt = 0;
+
     for (auto &row : as)
-        for (auto &col : row) {
-            col = cnt;
-            ++cnt;
+        for (auto col : row) {
+            cout << col << " ";
         }
 
     cout << row[0] << row[1] << endl;

@@ -419,6 +419,9 @@ const pstring *ps; //ps 是一个指针，它的对象是指向char的常量指�
 auto item = val1+val2; //item初始化为相加的结果
 auto i = 0, *p = &i; //正确：i是整数、p是整数指针
 auto sz = 0, pi = 3.14; //错误两个的类型不同
+int as[3][4];
+auto (&row)[4] = as[1]; //错误auto 对于auto 默认查找到的返回值是指向as[1][0] 的指针；引用不能是数组,只能是数组类型的引用，因为为引用不是对象
+auto &row = as[1]; //这样就是可以的。
 ```
 
 ##### 5.2.1 复合、常量、auto
