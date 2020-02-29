@@ -6,7 +6,7 @@ int main() {
     cout << as[0][0] << as[0][1] << as[1][0] << as[1][1] << endl;
 //    auto (row)[4]= {as[0],as[1],as[2],as[3]};
 //    auto row = as;
-    cout << row[1][1] << row[1][0] <<endl;
+//    cout << row[1][1] << row[1][0] <<endl;
 //    auto &row = as[1][0];
     size_t cnt = 0;
 
