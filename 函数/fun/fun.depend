@@ -1,6 +1,7 @@
 # depslib dependency file v1.0
-1583199885 source:d:\工作缓存区\git\c--depth_review\函数\fun\main.cpp
+1583217328 source:d:\工作缓存区\git\c--depth_review\函数\fun\main.cpp
 	<iostream>
+	<bits/stdc++.h>
 	<fact.cc>
 
 1583202467 d:\工作缓存区\git\c--depth_review\函数\fun\\funh.h
