@@ -1,3 +1,4 @@
+//#define NDEBUG
 #include <iostream>
 #include <bits/stdc++.h>
 #include <fact.cc>
@@ -69,10 +70,39 @@ int even[] = {0,2,4,6,8};
 decltype(odd) *arr(int i) {
     return (i%2) ? &odd : &even;
 }
+//inline int &ss(int &a) {
+//    return a;
+//}
+void print(const int ia[], size_t size) {
+#ifndef NDEBUG
+    //_ _func_ _是编译器定义的一个局部静态变量，用于存放函数名
+    //是一个const char 的一个静态数组， 存放函数名
+    cerr << __func__ <<" :array size is " << size << endl;
 
+#endif // NDEBUG
+}
+
+void ffs(int a) {
+}
+void ffs(double a, double b=4.2) {
+    cout <<"ffs";
+}
+void man(long a) {}
+void man(double a){}
+using F= int(*)(int*, int);
 int main()
 {
+    auto i -> int;
+    cout << sizeof(F);
+//    man(3);
+//
+//    ffs(3.2);
+//    int lin = 5;
+//    assert(lin == 0);
+//    ss(lin) = 3;
+//    cout << lin << endl;
     int a[] = {0, 1, 2};
+    print(a, 3);
 
     func(&a);
     for (auto i : a) cout << i << endl;

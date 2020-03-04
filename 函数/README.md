@@ -391,12 +391,337 @@ int (*p2)[10] = &arr; // p2是个指针，它指向含有19个整数的数组
 
 * 名字相同但形参列表不同的我们称为函数重载
 
+* 虽然调用定义相同的函数名，但编译器会根据实参的类型确定调用的函数
+
+  * 所以对于重载函数，他们应该是在形参数量或形参类型上有所不同。
+  * 不允许所有要素相同
+  * 对于多个函数可匹配时，会发生二义性错误
+  
   ```cpp
   void print(const char *cp);
   void print(const char *beg, const int *end);
   ...
+  ```
 ```
   
   * 编译器会根据传入实参类型去选择
   
   定义重载函数
+  typedef int in;
+  void pp(int i);
+  void pp(in i); //错误 ：这两个是相同的所以不行
+  double pp(in i); //错误，形参一样
+  string pp(const int i); //错误普通形参类型不区分const
+  string pp(const int *i);
+  string pp(int *i); //可以 引用和指针可以区分const //非常量的对象或指针，会优先选用非常量版本的函数
+  void pp(double i); //这个可以类型不同
+```
+
+```cpp
+# const_cast的用法
+const string &ff(const string &s) {
+    return s;
+}
+string &ff(string &s) {///利用它进行转换，实现与上面相同的功能且返回普通的string&是安全的
+    auto &r = ff(const_cast<const string&>(s));
+    return const_cast<string&>(r);
+}
+```
+
+#### 4.1 重载作用域的区别
+
+* 作用域里出现的同名类型会隐藏掉外界的重载函数
+
+  * 外层同名的类型都会被隐藏
+
+  ```cpp
+  string read();
+  void print(const string &);
+  void print(double);
+  void foof(int ival) {
+      bool read = false;//新作用域，隐藏了外层的read
+      read();//错误 read被隐藏了，不是函数
+      void print(int); //新作用域，隐藏外层的print
+      print("vv");//错误
+      print(ival); //正确 print(int);可见
+      print(3.1); //正确转为int调用print(int);
+  }
+  ```
+
+  
+
+### 5 . 特殊用途特性
+
+#### 5.1 默认实参
+
+>  某系函数的形参可含有默认实参，在调用的时候可以省略该实参
+
+```cpp
+string sc(int h, int k = 55, char s= ' ');
+```
+
+* 一个形参用了默认值后面的必须要用
+
+  ```cpp
+  //调用
+  string k;
+  k = sc();//错误h形参没有默认值
+  k = sc(3);//正确等价于 sc(3, 55, ' ');
+  k = sc(3, 33);//正确等价于 sc(3, 33, ' ');
+  k = sc(3, 22, '#');//正确等价于 sc(3, 22, "#");
+  k = sc(3, , 's'); //错误只能省略尾部实参
+  ```
+
+  * 添加默认形参 同个形参只能被添加一次
+
+    ```cpp
+    int fs(int, int, int = 3);
+    int fs(int, int, int = 3);// 错误重复定义
+    int fs(int, int = 1, int); //正确添加为 fs(int, int = 1, int = 3);
+    ```
+
+    * 局部变量不能默认实参
+
+    ```cpp
+    int ks = 4;
+    int a = 5;
+    int fs(int = a, int = ks); //ks 和a必须在函数体外 
+    void f2() {
+        ks = 3;
+        int kk = fs(); //调用了fs(5, 3);
+    }
+    ```
+
+#### 5.2 内联函数和constexpr 函数
+
+> 调用函数其实包含一系列工作：调用前要保存寄存器，并返回时恢复；可能需要拷贝实参；转向另一个位置继续执行
+
+* 内联函数可避免函数开销
+
+  ```cpp
+  inline const string & shorterString(const string &s1, const string &s2) {
+      return s1.size() <= s2.size() ? s1:s2;
+  }
+  cout << shorterString(s1, s2) << endl;
+  cout << (s1.size() <= s2.size())? s1 : s2 << endl;等价
+  ```
+
+  * 消除函数运行时的开销
+    * 一般用于规模较小、流程直接、频繁调用的函数。如一个75行的函数不大可能在调用点被内联展开
+
+* constexpr 函数
+
+  * 函数返回类型和形参类型都是字面类型
+
+  * 且必须包含return语句
+
+    ```cpp
+    constexpr int new_sz() {return 33;}
+    constexpr int foo = new_sz(); //正确foo是常量表达式
+    ```
+
+    * 编译器能验证new_sz 的返回值是常量表达式
+
+    * 为了能在编译过程中随时打开， constexpr函数会隐式指定为内联函数
+
+    * 函数体内不能另外声明，但可以，有空语句，类型别名，using声明等
+
+      ```cpp
+      constexpr size_t scl(size_t cnt) {return new_sz()*cnt;}
+      int arr[scl(2)]; //正确：scl(2)是常量表达式
+      int i = 2;
+      int a2[scl[i]]; //错误scl(i) 不是常量；虽然我的编译器没有报错
+      ```
+
+      * 当我们用非常量调用时，返回值也是一个非常量
+      * 书上说可以多次定义，但我的编译器并没实现报错了
+      * 但很同意把它放入头文件里
+
+#### 5.3 调试帮助
+
+> 头文件保护的技术，以便选择地执行调试代码，当应用编写完成准备发布时要先屏蔽调试代码。
+
+* 这种方法用到两项预处理功能： assert 和NDEBUG 
+
+  * `assert`:是一种预处理宏，其实就是一个预处理变量类似内联函数。用表达式作为它的条件
+
+    > assert(expr);
+
+  * 先对expr求值，如果表达式为假，assert 输出信息并终止程序的执行。 如果非0为真，assert什么都不做
+
+  * 在头文件cassert中
+
+```cpp
+    int lin = 5;
+    assert(lin == 0);//会终止程序
+//Assertion failed: lin == 0, file D:\工作缓存区\git\C--Depth_review\函数\fun\main.cpp, line 79
+```
+
+* NDEBUG 预处理变量
+
+  > assert 的行为依赖域一名为NDEBUG的预处理变量的状态。如果定义了NDEBUG，则assert什么都不做，默认没有定义时，assert会执行运行时检测
+
+  我们可以语句定义NDEBUG ，关闭调试状态。
+
+  ```bash
+  CC -D NDEBUG main.c
+  等价与main.c里写#define NDEBUG >>要放在最开始
+  或者如果NDEBUG未定义
+  void print(const int ia[], size_t size) {
+  #ifndef NDEBUG
+      //_ _func_ _是编译器定义的一个局部静态变量，用于存放函数名
+      //是一个const char 的一个静态数组， 存放函数名
+      cerr << __func__ <<" :array size is " << size << endl;
+  
+  #endif // NDEBUG
+  }
+  ```
+
+  * 还有4个程序调试有用的
+
+  | 名字             | 含义                     |
+  | ---------------- | ------------------------ |
+  | `__FILE__`       | 存放文件名的字符串       |
+  | `__LINE__`       | 存放当前行号的整型字面值 |
+  | `__TIME__`       | 存放文件编译时间的字符串 |
+  | `__DATE__`       | 存放文件编译日期的字符串 |
+  | 用于描述错误信息 |                          |
+
+### 6. 函数匹配
+
+在大多数情况下，我们容易确定某次调用应该选用哪个重载函数
+
+* 确定候选函数和可行函数
+
+  * 候选函数集
+
+    > 函数名同名，声明调用点可见
+
+  * 可行函数
+
+    > 形参数量与实参数量一致，实参类型与形参类型相同，或者能转换形参类型
+
+    ```cpp
+    double ss(int);
+    double ss(double, double = 5.2);
+    ss(5.3); //会调用第二个，因为有默认实参，且用double不会损失精度，如果没有第二个，就会调用第一个
+    
+    void ffs(int a, int b) {
+    }
+    void ffs(double a, double b) {
+    }
+    ffs(3,3.2); //错误二义性，系统无法确定哪个脱颖而出
+    ```
+
+    
+
+#### 6.1 实参类型转换
+
+> 为确定最佳匹配，转换划分等级，排序如下：
+
+1. 精确匹配
+
+   1. 类型相同
+   2. 实参从数组类型或函数类型转换成对应的指针类型
+   3. 向实参添加顶层const 或删除顶层const
+
+2. 通过const转换实现匹配
+
+   如果是引用或指针是否用const ，则通过实参是否常量来选择
+
+3. 通过类型提升实现匹配
+
+4. 通过算术类型转换
+
+   1. 如：一个接收int，一个接收short，则只有当提供short才选择short，即便是很小的整数
+
+   2. 从int转unsigned int 并不比int 转double 高，
+
+      ```cpp
+      void man(long);
+      void man(float);
+      man(3.1); //二义性
+      ```
+
+5. 通过类类型转换
+
+### 7. 函数指针
+
+> 函数指针指向的是函数而非对象，函数类型由他的返回类型和形参类型共同决定
+
+```cpp
+bool lens(const string &, const string &);
+bool (*p)(const string &, const string &);// 为初始化与函数指针
+```
+
+* 使用函数指针
+
+  > 当我们把函数名做一个值来用时，该函数会自动转换成指针，
+  >
+  > ```cpp
+  > p = lens; //pf指向lens函数
+  > p = &lens; //等价，取地址符可选的
+  > //使用指针调用函数时，可以无需解引用
+  > bool b1 = p("ss", "ssa"); //调用lens函数
+  > bool b2 = (*p)("ss", "ssa"); //等价
+  > bool b2 = lens("ss", "ssa"); //等价
+  > ```
+
+  * 指针指向的类型必须相同，可以用nullptr和0赋值表示没有指向
+
+* 重载函数指针
+
+  * 通过指针类型选定
+
+  > 当我们使用重载函数时，必须清晰定好选用的函数
+
+  ```cpp
+  void ff(int *);
+  void ff(unsigned int );
+  void (*pf)(unsigned int) = ff; //pf 指向第二个
+  ```
+
+* 函数形参
+
+  ​	和数组类似，虽然不能定义函数类型的形参，但时可以为指向函数的指针
+
+  ```cpp
+  void uses(const string &s1, const string &s2, bool pf(const string &, const string &));
+  //第三个类型是函数类型，他会自动转换成函数指针
+  void uses(const string &s1, const string &s2, bool (*pf)(const string &, const string &)); // 等价
+  uses(s1, s2, lens); //可以直接把函数当实参使用，会自动转换
+  ```
+
+  * 可利用decltype简化
+
+    * 不会因函数自动转指针
+
+    ```cpp
+    typedef bool Func(cosnt string &, const string &);
+    typedef decltype(lens) Func2; 
+    //函数等价类型
+    typedef bool (*Fun2)(cosnt string &, const string &);
+    typedef decltype(lens) *Fun1;  //指针等价类型
+    ```
+
+  * 返回指向函数的指针
+
+    > 和数组相似
+
+    ```cpp
+    using F = int(int *, int ); //F是一个函数类型
+    using PF = int(*) (int *, int ); //PF是指针类型
+    ```
+
+    * 返回类型并不能自动转成地址，所以要显示的返回指针类型
+
+      ```cpp
+      PF f1(int); //正确
+      F f1(int); //错误。 F是函数类型
+      F *f1(int); // 正确
+      int (*f1(int))(int *, int); //正确
+      auto f1(int) -> int (*)(int*, int);//正确
+      ```
+
+      * 如果我们明确知道返回的函数时，就能用decltype。同样要在声明的时候加上显示的*号。
+
