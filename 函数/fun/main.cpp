@@ -92,7 +92,7 @@ void man(double a){}
 using F= int(*)(int*, int);
 int main()
 {
-    auto i -> int;
+//    auto i -> int;
     cout << sizeof(F);
 //    man(3);
 //

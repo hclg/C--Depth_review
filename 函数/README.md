@@ -724,4 +724,47 @@ bool (*p)(const string &, const string &);// 为初始化与函数指针
       ```
 
       * 如果我们明确知道返回的函数时，就能用decltype。同样要在声明的时候加上显示的*号。
+      * 存入函数指针的vector
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+using F = int(*)(int, int);
+typedef int (*F1)(int, int);
+
+int add(int a, int b) {
+    cout << __func__ << " :";
+    return a+b;
+}
+
+int sub(int a, int b) {
+    cout << __func__ << " :";
+    return a-b;
+}
+
+int mult(int a, int b) {
+    cout << __func__ << " :";
+    return a*b;
+}
+
+int divi(int a, int b) {
+    cout << __func__ << " :";
+    return a/b;
+}
+
+typedef decltype(add) *F2;
+
+int main() {
+    int a, b;
+    cin >> a >> b;
+    vector<F> ve;
+    ve.push_back(add);
+    ve.push_back(sub);
+    ve.push_back(mult);
+    ve.push_back(divi);
+    for (auto &i : ve)
+        cout << i(a,b) << endl;
+    return 0;
+}
+```
 
