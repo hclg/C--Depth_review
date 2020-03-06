@@ -32,6 +32,13 @@ constexpr int new_sz(int i) {
     return 33*i;
 }
 
+class A {
+    int s;
+    void ff(int &a) const {
+        s++;
+    };
+};
+
 int ks = 4;
 int main() {
     int kss = 5;
