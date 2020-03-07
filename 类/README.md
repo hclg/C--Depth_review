@@ -454,6 +454,31 @@ myscreen.set('#');
   ```
 
   * 先执行受委托的，在执行委托者的
+  
+* 使用默认构造函数
+
+  ```cpp
+      screen get(); //这是定义一个函数不是对象
+      cout << get.get() << endl; //错误
+  ```
+
+* 类类型转换
+
+  ```cpp
+  data item;
+      item.combine(string("sssss")); //隐式string转换成data，执行了接受string的构造函数
+      item.combine(data("sssss")); //隐式转换string，显示转换data
+  	item.combine(cin); //接受了一个istream类型的构造函数，隐式转换
+  ```
+
+  * 抑制构造函数的隐式转换，再构造函数前加上explicit即可
+    * 此关键字值允许出现再类的构造函数声明处即可
+    * static_cast 可以用explicit的构造函数
+
+#### 5.1 聚合类
+
+* 所有成员都是public的
+* 没有定义任何构造函数
 
 ### 6. 类的静态成员
 

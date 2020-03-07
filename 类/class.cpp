@@ -29,6 +29,13 @@ private:
 
 };
 
+data & data::combine(const data& t) {
+        this->bookno += t.bookno;
+        this->sold += t.sold;
+        this->reve += t.reve;
+        return *this;
+    }
+
 class screen {
 public:
     typedef string::size_type pos; //部分定义pos
@@ -45,6 +52,7 @@ public:
     do_display(os); return *this;}
 private:
     void do_display(ostream &os) const {os << contents;}
+//    static int ss = 0;
     pos cursor = 0;
     pos height = 0, width = 0;
     string contents;
@@ -90,14 +98,32 @@ ostream &print(ostream &os, const data &item) {
         << item.reve << " " << item.avg();
     return os;
 }
+data::data(istream &is) {
+    is >> this->bookno >> this->sold >> this->reve;
+}
+struct A {
+    int i;
+    string s;
+};
 
 int main() {
 
     double a = 9;
-    const double *const c = &a;
-    const_cast<double *>(c);
-    const double &d = a;
-    const_cast<double *>(d);
+//    screen get();
+//    cout << get.get() << endl;
+    int k = 5;
+    int s(k);
+    cout << s << endl;
+    data item;
+    data ss(item);
+    item.combine(string("sssss"));
+    item.combine(data("sssss"));
+    item.combine(cin);
+    cout << item.isbn() << endl;
+//    const double *const c = &a;
+//    const_cast<double *>(c);
+//    const double &d = a;
+//    const_cast<double *>(d);
 
 //    decltype((int)) b = a;
 //    cout << sizeof(decltype((int)) <<endl;
