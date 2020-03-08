@@ -477,8 +477,70 @@ myscreen.set('#');
 
 #### 5.1 聚合类
 
+满足以下条件
+
 * 所有成员都是public的
 * 没有定义任何构造函数
+* 没有类初始值
+* 没有基类，也没有virtual 函数
+
+```cpp
+struct Data {
+	int ival;
+    string s;
+}
+```
+
+> 可用花括号给成员初始值列表，初始化聚合类成员
+>
+> 顺序一致
+
+#### 5.2 字面值常量类
+
+* 数据成员都是字面值类型
+* 类必须至少含一个constexpr 构造函数
+* 如果一个数据成员含有类内初始值，则内置类型成员初始值必须是一条常量表达式；如果是某种类类型，必须使用自己成员的constexpr构造函数
+* 类必须使用析构函数默认定义
+
+```cpp
+
+class Debug {
+    public:
+    constexpr Debug(bool b = true) : hw(b), io(b),other(b) {}
+    constexpr Debug(bool h, bool i, bool o): hw(h), io(i), other(o) {}
+    constexpr bool any() {return hw || io || other;}
+    private:
+        bool hw;
+        bool io;
+        bool other;
+}
+```
+
+* constexpr 构造函数用于生成constexpr对象
+
+  ```cpp
+  constexpr Debug io_sub(false, true, false);
+  if (io_sub.any())
+      cerr << "...." << endl;
+  ```
+
+  
 
 ### 6. 类的静态成员
 
+* 声明静态成员
+
+  * 加上static
+
+  * 该对象被所以该类对象共享
+  * 不与任何一个对象绑定
+  * 不包含this指针
+  * 作为结果，不能声明成const
+  * 不能再static 函数体内使用this指针
+
+  ```cpp
+  double r;
+  r = Account::rate(); //使用作用域运算符
+  ```
+
+  * 

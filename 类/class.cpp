@@ -114,7 +114,7 @@ int main() {
     int k = 5;
     int s(k);
     cout << s << endl;
-    data item;
+    data item = {};
     data ss(item);
     item.combine(string("sssss"));
     item.combine(data("sssss"));
