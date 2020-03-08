@@ -106,6 +106,17 @@ struct A {
     string s;
 };
 
+class Debug {
+    public:
+    constexpr Debug(bool b = true) : hw(b), io(b),other(b) {}
+    constexpr Debug(bool h, bool i, bool o): hw(h), io(i), other(o) {}
+    constexpr bool any() {return hw || io || other;}
+    private:
+        bool hw;
+        bool io;
+        bool other;
+}
+
 int main() {
 
     double a = 9;
@@ -120,12 +131,6 @@ int main() {
     item.combine(data("sssss"));
     item.combine(cin);
     cout << item.isbn() << endl;
-//    const double *const c = &a;
-//    const_cast<double *>(c);
-//    const double &d = a;
-//    const_cast<double *>(d);
 
-//    decltype((int)) b = a;
-//    cout << sizeof(decltype((int)) <<endl;
     return 0;
 }
