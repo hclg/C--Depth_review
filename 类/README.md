@@ -539,8 +539,51 @@ class Debug {
   * 不能再static 函数体内使用this指针
 
   ```cpp
+  
+  class Account {
+  public:
+    void calculate() {amount += amount * inter;}
+      static double rate() {return inter;}
+      static void rate(double);
+  private:
+      string own;
+      double amount;
+      static double inter;
+      static double initRate();
+  };
   double r;
   r = Account::rate(); //使用作用域运算符
   ```
-
-  * 
+  
+  * 关键字只能放在类中，外部定义不要关键字
+  
+    * 也可以将它定义在外面
+  
+  * 静态成员不是被创建类对象时初始化的，所以初始化不能写在内部，要全局的初始只有一次
+  
+    ```cpp
+    double Account::inter = initRate();
+    ```
+  
+  * 如果想在类内部初始化，通过要求字面值属于常量表达式类型即可
+  
+    ```cpp
+    static constexpr int period = 30;//常量表达式
+    double as[period];
+    ```
+  
+  * 静态成员属于不完整类型，可以作为默认实参
+  
+    * 普通成员不行
+  
+    ```cpp
+    class A {
+      static A pr; //正确
+      A *s; //正确不完整类型
+      A sa; //错误
+    public:
+    	A & cl(A = pr);    
+    };
+    ```
+  
+    

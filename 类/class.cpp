@@ -115,22 +115,57 @@ class Debug {
         bool hw;
         bool io;
         bool other;
+};
+
+
+
+class Account {
+public:
+    void calculate() {amount += amount * inter;}
+    static double rate() {return inter;}
+    static void rate(double);
+//     {
+//        inter += a;
+//    }
+private:
+    string own;
+    double amount;
+    static double inter;
+    static constexpr int pr = 30;
+    static double initRate();
+};
+
+double Account::inter = initRate();
+double Account::initRate() {
+    return 1.0;
 }
+void Account::rate(double a) {
+    inter += a;
+}
+
+class B {
+    static B l;
+public:
+    B &c(B = l);
+};
 
 int main() {
 
-    double a = 9;
-//    screen get();
-//    cout << get.get() << endl;
-    int k = 5;
-    int s(k);
-    cout << s << endl;
-    data item = {};
-    data ss(item);
-    item.combine(string("sssss"));
-    item.combine(data("sssss"));
-    item.combine(cin);
-    cout << item.isbn() << endl;
+
+
+
+//    double a = 9;
+////    screen get();
+////    cout << get.get() << endl;
+//    int k = 5;
+//    int s(k);
+//    cout << s << endl;
+//    data item = {};
+//    data ss(item);
+//    item.combine(string("sssss"));
+//    item.combine(data("sssss"));
+//    item.combine(cin);
+//    cout << item.isbn() << endl;
 
     return 0;
 }
