@@ -47,4 +47,4 @@
   shared_ptr<int> p5 = make_shared<int>();
   ```
 
-  
+* 
